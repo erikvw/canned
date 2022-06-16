@@ -9,15 +9,31 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+import os
+import sys
 from pathlib import Path
+
+import environ
+
+env = environ.Env()
+ENV_DIR = str(Path(os.path.dirname(os.path.abspath(__file__))).parent)
+if "runtests.py" in sys.argv:
+    env.read_env(os.path.join(ENV_DIR, ".env-tests"))
+    print(f"Reading env from {os.path.join(ENV_DIR, '.env-tests')}")
+else:
+    env.read_env(os.path.join(ENV_DIR, ".env"))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-APP_NAME = "canned"
+APP_NAME = "canned_views_app"
+
+
 INDEX_PAGE = "http://localhost:8000"
 AUTO_CREATE_KEYS = False
 SITE_ID = 1
+EDC_NAVBAR_DEFAULT = "canned_views_app"
+EDC_PROTOCOL_PROJECT_NAME = "Reports"
+PROJECT_NAME = "Reports"
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -49,8 +65,8 @@ INSTALLED_APPS = [
     "edc_sites.apps.AppConfig",
     "edc_navbar.apps.AppConfig",
     "edc_dashboard.apps.AppConfig",
-    "reports.apps.AppConfig",
-    "canned.apps.AppConfig",
+    "canned_views.apps.AppConfig",
+    "canned_views_app.apps.AppConfig",
 ]
 
 MIDDLEWARE = [
@@ -70,7 +86,7 @@ MIDDLEWARE = [
 # if not DEFENDER_ENABLED:
 #     MIDDLEWARE.pop(MIDDLEWARE.index("defender.middleware.FailedLoginMiddleware"))
 
-ROOT_URLCONF = "canned.urls"
+ROOT_URLCONF = "canned_views_app.urls"
 
 TEMPLATES = [
     {
@@ -88,19 +104,33 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "canned.wsgi.application"
+WSGI_APPLICATION = "canned_views_app.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
 
+DATABASES = {"default": env.db()}
+# be secure and clear DATABASE_URL since it is no longer needed.
+DATABASE_URL = None
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": "canned_views",
+#         "USER": "",
+#         "PASSWORD": "",
+#         "HOST": "localhost",
+#         "PORT": "",
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

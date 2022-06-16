@@ -8,7 +8,7 @@ CANNED_SUPER_ROLE = "CANNED_SUPER_ROLE"
 canned_view_codenames = []
 for app_config in django_apps.get_app_configs():
     if app_config.name in [
-        "reports",
+        "canned_views",
     ]:
         for model_cls in app_config.get_models():
             for prefix in ["view"]:
@@ -19,7 +19,7 @@ for app_config in django_apps.get_app_configs():
 canned_super_codenames = []
 for app_config in django_apps.get_app_configs():
     if app_config.name in [
-        "reports",
+        "canned_views",
     ]:
         for model_cls in app_config.get_models():
             for prefix in ["add", "change", "view", "delete"]:

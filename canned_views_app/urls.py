@@ -3,10 +3,12 @@ from django.urls import include, path, re_path
 from django.views.generic import RedirectView
 from edc_auth.views import LogoutView
 from edc_dashboard.utils import get_index_page
-from edc_dashboard.views import AdministrationView, HomeView
+from edc_dashboard.views import AdministrationView
 from edc_utils.paths_for_urlpatterns import paths_for_urlpatterns
 
-app_name = "canned"
+from .views import HomeView
+
+app_name = "canned_views_app"
 
 urlpatterns = [
     path("accounts/", include("edc_auth.urls")),
@@ -15,7 +17,7 @@ urlpatterns = [
     *paths_for_urlpatterns("edc_export"),
     *paths_for_urlpatterns("edc_randomization"),
     *paths_for_urlpatterns("edc_notification"),
-    *paths_for_urlpatterns("reports"),
+    *paths_for_urlpatterns("canned_views"),
     path("admin/", admin.site.urls),
     path(
         "switch_sites/",
