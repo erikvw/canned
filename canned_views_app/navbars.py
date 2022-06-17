@@ -1,6 +1,6 @@
 from edc_navbar import Navbar, site_navbars
 
-from canned_views.navbars import canned_views_navbar
+from canned_views.navbars import navbar as canned_views_navbar
 
 navbar = Navbar(name="canned_views_app")
 

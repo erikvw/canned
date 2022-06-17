@@ -54,20 +54,19 @@ class DynamicModel:
         if sql_view_name != sql_view_name.replace(" ", "").lower().strip(BAD_CHARS):
             raise DynamicModelError("Invalid sql_view_name")
         self.sql_view_name = sql_view_name
-        self.sql = f"select * from {sql_view_name}"
         self.read_from_cursor()
         model_name = f"TemporaryView{name.replace('_', '').lower().title()}"
-        # Reports._meta.apps.register_model()
-        # app_config = django_apps.all_models
-        # app_config
-        # check model cache
-        # new_class._meta.apps.register_model(new_class._meta.app_label, new_class)
-        try:
-            del django_apps.all_models[settings.APP_NAME][model_name]
-        except KeyError:
-            pass
         # create class
         self.model_cls = type(model_name, (models.Model,), self.model_attrs)
+        # unregister from all_models
+        try:
+            del self.model_cls._meta.apps.all_models[settings.APP_NAME][model_name.lower()]
+        except KeyError:
+            pass
+
+    @property
+    def sql(self):
+        return f"select * from {self.sql_view_name}"
 
     def read_from_cursor(self):
         """Determine server type and update select command and column names"""
@@ -118,10 +117,14 @@ class DynamicModel:
             field_cls = models.IntegerField(null=True)
         elif field_type.startswith("int"):
             field_cls = models.IntegerField(null=True)
+        elif field_type.startswith("tinyint"):
+            field_cls = models.IntegerField(null=True)
         elif field_type.startswith("datetime"):
             field_cls = models.DateTimeField(null=True)
         elif field_type.startswith("date"):
             field_cls = models.DateField(null=True)
+        elif field_type.startswith("decimal"):
+            field_cls = models.DecimalField(null=True, max_digits=1, decimal_places=6)
         else:
             raise DynamicModelError(f"Unknown field type. Got {field_type}.")
         return field_cls

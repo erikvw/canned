@@ -32,9 +32,9 @@ class CannedViewsAdmin(admin.ModelAdmin):
 
     list_display = [
         "display_name",
+        "list_view",
         "description",
         "sql_view_name",
-        "list_view",
     ]
 
     search_fields = ("name", "display_name", "sql_view_name")
