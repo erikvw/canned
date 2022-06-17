@@ -1,3 +1,5 @@
+import pdb
+
 from edc_auth.site_auths import site_auths
 
 from .auth_objects import (
@@ -9,6 +11,7 @@ from .auth_objects import (
     canned_view_codenames,
 )
 
+pdb.set_trace()
 site_auths.add_group(*canned_view_codenames, name=CANNED_VIEW, view_only=True)
 site_auths.add_group(*canned_super_codenames, name=CANNED_SUPER, no_delete=True)
 site_auths.add_role(CANNED_VIEW, name=CANNED_ROLE)

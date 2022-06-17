@@ -2,9 +2,10 @@ from typing import Any, List, Optional
 
 import sqlvalidator
 from django import forms
-from django.apps import apps as django_apps
 from django.conf import settings
 from django.db import OperationalError, connection, models
+from django.urls import NoReverseMatch, reverse
+from edc_dashboard import url_names
 
 from .constants import BAD_CHARS
 
@@ -46,6 +47,7 @@ Dialects = dict(mysql=Dialect("Field", "Type"), sqlite=Dialect("name", "type"))
 class DynamicModel:
     def __init__(self, name: str, sql_view_name: str):
         self._attrs = {}
+        self.sql_select_columns = []
         self.sql_describe: Optional[str] = None
         self.dialect: Optional[Dialect] = None
         self.columns: Optional[List[str]] = None
@@ -64,12 +66,33 @@ class DynamicModel:
         except KeyError:
             pass
 
-    @property
-    def sql(self):
-        return f"select * from {self.sql_view_name}"
+    def get_sql(self, cols: Optional[str] = None):
+        cols = cols.split(",") if cols else []
+        for col in cols:
+            if col not in self.sql_select_columns:
+                raise DynamicModelError(f"Invalid column specified. Got `{col}`.")
+        sql_select_columns = cols or self.sql_select_columns
+        if "id" not in sql_select_columns:
+            sql = f"select {','.join(sql_select_columns)}, 0 AS id from {self.sql_view_name}"
+        else:
+            sql = f"select {','.join(sql_select_columns)} from {self.sql_view_name}"
+        if "subject_identifier" in sql_select_columns:
+            try:
+                url = reverse(url_names.get("subject_review_listboard_url"))
+            except NoReverseMatch:
+                pass
+            else:
+                sql = sql.replace(
+                    "subject_identifier",
+                    (
+                        f"""CONCAT('<A href="{url}?q=', subject_identifier, '">', """
+                        """subject_identifier, '</A>') as subject_identifier"""
+                    ),
+                )
+        return sql
 
     def read_from_cursor(self):
-        """Determine server type and update select command and column names"""
+        """Determine server type and update select command and column names."""
         with connection.cursor() as cursor:
             try:
                 cursor.execute(f"describe {self.sql_view_name}")
@@ -90,6 +113,7 @@ class DynamicModel:
             cursor.execute(self.sql_describe)
             for row in cursor.fetchall():
                 rowdict = dict(zip(self.columns, row))
+                self.sql_select_columns.append(rowdict.get(self.dialect.field))
                 attrs.update(
                     {
                         rowdict.get(self.dialect.field): self.get_dynamic_field_cls(
@@ -109,15 +133,14 @@ class DynamicModel:
         elif field_type.startswith("char"):
             max_length = int(field_type.replace("char(", "").split(")")[0])
             field_cls = models.CharField(max_length=max_length, null=True)
-        elif field_type.startswith("text"):
+        elif field_type.startswith("text") or field_type.startswith("longtext"):
             field_cls = models.TextField(null=True)
-        elif field_type.startswith("longtext"):
-            field_cls = models.TextField(null=True)
-        elif field_type.startswith("integer"):
-            field_cls = models.IntegerField(null=True)
-        elif field_type.startswith("int"):
-            field_cls = models.IntegerField(null=True)
-        elif field_type.startswith("tinyint"):
+        elif (
+            field_type.startswith("integer")
+            or field_type.startswith("int")
+            or field_type.startswith("bigint")
+            or field_type.startswith("tinyint")
+        ):
             field_cls = models.IntegerField(null=True)
         elif field_type.startswith("datetime"):
             field_cls = models.DateTimeField(null=True)

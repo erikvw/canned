@@ -25,18 +25,23 @@ class BasicView(EdcViewMixin, NavbarViewMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         admin_url = reverse("canned_views_admin:canned_views_cannedviews_changelist")
-        context.update(admin_url=f"{admin_url}?q={self.report.name}", report=self.report)
+        context.update(
+            admin_url=f"{admin_url}?q={self.report.name}",
+            report=self.report,
+        )
         return context
 
-    def get(self, request, *args, name=None, **kwargs):
+    def get(self, request, *args, selected_report_name=None, **kwargs):
         try:
-            self.report = CannedViews.objects.get(name=name)
+            self.report = CannedViews.objects.get(name=selected_report_name)
         except ObjectDoesNotExist as e:
             raise CannedViewNameError(e)
         try:
-            dynamic_model = DynamicModel(name, self.report.sql_view_name)
+            dynamic_model = DynamicModel(selected_report_name, self.report.sql_view_name)
         except DynamicModelError as e:
             raise CannedViewNameError(e)
         self.model = dynamic_model.model_cls
-        self.queryset = self.model.objects.raw(dynamic_model.sql)
+        self.queryset = self.model.objects.raw(
+            dynamic_model.get_sql(self.report.sql_select_columns)
+        )
         return super().get(request, *args, **kwargs)

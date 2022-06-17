@@ -1,4 +1,4 @@
-{% extends "edc_dashboard/bootstrap3/base.html" %}
+{% extends "canned_views/base.html" %}
 {% load static %}
 {% load canned_extras %}
 
@@ -33,10 +33,12 @@
         <a href="{{ admin_url }}" role="button" id="btn-copy-files" class="btn btn-default btn-sm"><i class="fa fa-gear fa-lg fa-fw"></i> Report settings</a>
       </span>
       <div style="text-align: center;font-weight: bold;"> {{ report.display_name|title }}</div>
+      <div style="text-align: center;font-weight: normal;font-style: italic"> {{ report.description }}</div>
+      <div style="text-align: left;font-weight: normal;"><B>Instructions:</B> {{ report.instructions }}</div>
     </div>
 </div>
 
-  {% write_table object_list %}
+  {% object_list_to_table object_list %}
 
 
 
