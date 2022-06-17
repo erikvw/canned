@@ -27,14 +27,20 @@
   <div class="panel panel-default">
     <div id="panel-media" class="panel-body">
       <span class="pull-left">
-        <a href="{% url 'canned_views:home_url' %}" role="button" id="btn-copy-files" class="btn btn-default btn-sm"><i class="fas fa-reply fa-lg fa-fw"></i> Back</a>
+        <a href="{% url 'canned_views:home_url' %}" role="button" id="btn-copy-files"
+           class="btn btn-default btn-sm"><i class="fas fa-reply fa-lg fa-fw"></i> Back
+        </a>
       </span>
       <span class="pull-right">
-        <a href="{{ admin_url }}" role="button" id="btn-copy-files" class="btn btn-default btn-sm"><i class="fa fa-gear fa-lg fa-fw"></i> Report settings</a>
+        <a href="{{ admin_url }}" role="button" id="btn-copy-files" class="btn btn-default btn-sm">
+          <i class="fa fa-gear fa-lg fa-fw"></i> Report settings
+        </a>
       </span>
-      <div style="text-align: center;font-weight: bold;"> {{ report.display_name|title }}</div>
+      <div style="text-align: center;font-weight: bold;"> {{ report.display_name|default:report.name|title }}</div>
       <div style="text-align: center;font-weight: normal;font-style: italic"> {{ report.description }}</div>
-      <div style="text-align: left;font-weight: normal;"><B>Instructions:</B> {{ report.instructions }}</div>
+      {% if report.instructions %}
+        <div style="text-align: left;font-weight: normal;"><B>Instructions:</B> {{ report.instructions }}</div>
+      {% endif %}
     </div>
 </div>
 
