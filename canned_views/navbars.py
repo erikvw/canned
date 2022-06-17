@@ -7,12 +7,12 @@ navbar_item = NavbarItem(
     name="canned_views_home",
     title="Monitoring Reports",
     label="MR",
-    codename="edc_navbar.canned_views_section",
+    codename="edc_navbar.nav_canned_views_section",
     url_name="canned_views:home_url",
     no_url_namespace=no_url_namespace,
 )
 
-canned_views_navbar = Navbar(name="canned_views")
-canned_views_navbar.append_item(navbar_item)
+navbar = Navbar(name="canned_views")
+navbar.append_item(navbar_item)
 
-site_navbars.register(canned_views_navbar)
+site_navbars.register(navbar)

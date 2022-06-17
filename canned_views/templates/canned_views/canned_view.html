@@ -22,7 +22,22 @@
 
 
 {% block main %}
+  {{ block.super }}
 
-{% write_table object_list %}
+  <div class="panel panel-default">
+    <div id="panel-media" class="panel-body">
+      <span class="pull-left">
+        <a href="{% url 'canned_views:home_url' %}" role="button" id="btn-copy-files" class="btn btn-default btn-sm"><i class="fas fa-reply fa-lg fa-fw"></i> Back</a>
+      </span>
+      <span class="pull-right">
+        <a href="{{ admin_url }}" role="button" id="btn-copy-files" class="btn btn-default btn-sm"><i class="fa fa-gear fa-lg fa-fw"></i> Report settings</a>
+      </span>
+      <div style="text-align: center;font-weight: bold;"> {{ report.display_name|title }}</div>
+    </div>
+</div>
+
+  {% write_table object_list %}
+
+
 
 {% endblock main %}
