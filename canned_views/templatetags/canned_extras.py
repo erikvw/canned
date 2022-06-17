@@ -5,7 +5,7 @@ register = template.Library()
 
 
 @register.simple_tag(takes_context=False)
-def write_table(object_list):
+def object_list_to_table(object_list):
     table = ['<table id="table_id" class="display">\n']
     columns = None
     for obj in object_list:

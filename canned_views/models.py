@@ -15,11 +15,23 @@ class CannedViews(SiteModelMixin, BaseUuidModel):
 
     description = models.TextField(null=True)
 
+    instructions = models.TextField(null=True)
+
     sql_view_name = models.CharField(
         max_length=50,
         null=True,
         blank=False,
-        validators=[RegexValidator(regex="^([a-z_])+$")],
+        validators=[RegexValidator(regex="^([a-z0-9_])+$")],
+    )
+
+    sql_select_columns = models.TextField(
+        null=True,
+        blank=True,
+        validators=[RegexValidator(regex="^([a-z0-9_,])+$")],
+        help_text=(
+            "Comma separated list of field names for the "
+            "SQL SELECT. All lowercase, no spaces"
+        ),
     )
 
     objects = models.Manager()

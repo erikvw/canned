@@ -23,7 +23,9 @@ class CannedViewsAdmin(admin.ModelAdmin):
                         "name",
                         "display_name",
                         "description",
+                        "instructions",
                         "sql_view_name",
+                        "sql_select_columns",
                     )
                 }
             ),
@@ -39,21 +41,26 @@ class CannedViewsAdmin(admin.ModelAdmin):
 
     search_fields = ("name", "display_name", "sql_view_name")
 
-    readonly_fields = ["sql_view_name"]
+    readonly_fields = ["sql_view_name", "sql_select_columns"]
 
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = super().get_readonly_fields(request, obj=obj) or []
-        if "sql_view_name" in readonly_fields and CANNED_SUPER_ROLE in [
-            role.name for role in request.user.userprofile.roles.all()
-        ]:
-            readonly_fields.remove("sql_view_name")
+        try:
+            roles = request.user.userprofile.roles.all()
+        except AttributeError:
+            pass
+        else:
+            role_names = [role.name for role in roles]
+            if "sql_view_name" in readonly_fields and CANNED_SUPER_ROLE in role_names:
+                readonly_fields.remove("sql_view_name")
+                readonly_fields.remove("sql_select_columns")
         return readonly_fields
 
     @staticmethod
     def list_view(obj=None, label=None):
         url = reverse(
             "canned_views:basic_view_url",
-            kwargs=dict(name=obj.name),
+            kwargs=dict(selected_report_name=obj.name),
         )
         context = dict(title="Go to canned view", url=url, label=label)
         return render_to_string("canned_views/button.html", context=context)
