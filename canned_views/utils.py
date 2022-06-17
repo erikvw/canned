@@ -14,6 +14,10 @@ class DynamicModelError(Exception):
     pass
 
 
+def get_sql_view_name_prefix():
+    return getattr(settings, "CANNED_VIEWS_PREFIX", "canned_")
+
+
 def validated_sql_select(sql_select):
     bad_words = ["insert", "delete", "update", "create", "alter"]
     if sql_select:
@@ -55,6 +59,10 @@ class DynamicModel:
             raise DynamicModelError("Invalid report name")
         if sql_view_name != sql_view_name.replace(" ", "").lower().strip(BAD_CHARS):
             raise DynamicModelError("Invalid sql_view_name")
+        if not sql_view_name.startswith(get_sql_view_name_prefix()):
+            raise DynamicModelError(
+                f"Invalid sql_view_name. Must start with `{get_sql_view_name_prefix()}`"
+            )
         self.sql_view_name = sql_view_name
         self.read_from_cursor()
         model_name = f"TemporaryView{name.replace('_', '').lower().title()}"
@@ -67,7 +75,7 @@ class DynamicModel:
             pass
 
     def get_sql(self, cols: Optional[str] = None):
-        cols = cols.split(",") if cols else []
+        cols = cols.replace(" ", "").split(",") if cols else []
         for col in cols:
             if col not in self.sql_select_columns:
                 raise DynamicModelError(f"Invalid column specified. Got `{col}`.")
