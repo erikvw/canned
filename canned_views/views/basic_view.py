@@ -27,7 +27,7 @@ class BasicView(EdcViewMixin, NavbarViewMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        admin_url = reverse("canned_views_admin:canned_views_cannedviews_changelist")
+        admin_url = reverse("canned_views_admin:canned_views_cannedview_changelist")
         context.update(
             admin_url=f"{admin_url}?q={self.report_definition.name}",
             report_definition=self.report_definition,
