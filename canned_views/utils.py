@@ -4,8 +4,6 @@ import sqlvalidator
 from django import forms
 from django.conf import settings
 from django.db import OperationalError, connection, models
-from django.urls import NoReverseMatch, reverse
-from edc_dashboard import url_names
 
 from .constants import BAD_CHARS
 
@@ -49,12 +47,25 @@ Dialects = dict(mysql=Dialect("Field", "Type"), sqlite=Dialect("name", "type"))
 
 
 class DynamicModel:
-    def __init__(self, name: str, sql_view_name: str):
+    def __init__(
+        self,
+        name: Optional[str] = None,
+        sql_view_name: Optional[str] = None,
+        reverse_url: Optional[str] = None,
+        reverse_url_name: Optional[str] = None,
+        reverse_url_args: Optional[str] = None,
+        filter_by_current_site: Optional[str] = None,
+        **kwargs,  # noqa
+    ):
         self._attrs = {}
         self.sql_select_columns = []
         self.sql_describe: Optional[str] = None
         self.dialect: Optional[Dialect] = None
         self.columns: Optional[List[str]] = None
+        self.reverse_url = reverse_url
+        self.reverse_url_name = reverse_url_name
+        self.reverse_url_args = reverse_url_args
+        self.filter_by_current_site = filter_by_current_site
         if name != name.replace(" ", "").lower().strip(BAD_CHARS):
             raise DynamicModelError("Invalid report name")
         if sql_view_name != sql_view_name.replace(" ", "").lower().strip(BAD_CHARS):
@@ -70,7 +81,9 @@ class DynamicModel:
         self.model_cls = type(model_name, (models.Model,), self.model_attrs)
         # unregister from all_models
         try:
-            del self.model_cls._meta.apps.all_models[settings.APP_NAME][model_name.lower()]
+            del self.model_cls._meta.apps.all_models[settings.APP_NAME][  # noqa
+                model_name.lower()
+            ]
         except KeyError:
             pass
 
@@ -80,23 +93,17 @@ class DynamicModel:
             if col not in self.sql_select_columns:
                 raise DynamicModelError(f"Invalid column specified. Got `{col}`.")
         sql_select_columns = cols or self.sql_select_columns
+        # if self.reverse_url == YES:
+        #     args = tuple() if self.reverse_url_args is None else
+        #     url_name = url_names.get(self.reverse_url_name)
+        #     sql_select_columns.append(f"'{url_name}' as url")
+        # if "subject_identifier" in sql_select_columns and "url" not in sql_select_columns:
+        #     url_name = url_names.get("subject_dashboard_url")
+        #     sql_select_columns.append(f"'{url_name}' as url")
         if "id" not in sql_select_columns:
             sql = f"select {','.join(sql_select_columns)}, 0 AS id from {self.sql_view_name}"
         else:
             sql = f"select {','.join(sql_select_columns)} from {self.sql_view_name}"
-        if "subject_identifier" in sql_select_columns:
-            try:
-                url = reverse(url_names.get("subject_review_listboard_url"))
-            except NoReverseMatch:
-                pass
-            else:
-                sql = sql.replace(
-                    "subject_identifier",
-                    (
-                        f"""CONCAT('<A href="{url}?q=', subject_identifier, '">', """
-                        """subject_identifier, '</A>') as subject_identifier"""
-                    ),
-                )
         return sql
 
     def read_from_cursor(self):

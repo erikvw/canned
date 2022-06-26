@@ -3,13 +3,13 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 
 from .admin_site import canned_views_admin
-from .auth_objects import CANNED_SUPER_ROLE
+from .auth_objects import CANNED_VIEW_SUPER_ROLE
 from .forms import CannedViewsForm
-from .models import CannedViews
+from .models import CannedView
 
 
-@admin.register(CannedViews, site=canned_views_admin)
-class CannedViewsAdmin(admin.ModelAdmin):
+@admin.register(CannedView, site=canned_views_admin)
+class CannedViewAdmin(admin.ModelAdmin):
 
     form = CannedViewsForm
 
@@ -26,6 +26,20 @@ class CannedViewsAdmin(admin.ModelAdmin):
                         "instructions",
                         "sql_view_name",
                         "sql_select_columns",
+                        "filter_by_current_site",
+                    )
+                }
+            ),
+        ),
+        (
+            "Custom url",
+            (
+                {
+                    "fields": (
+                        "reverse_url",
+                        "linked_column_name",
+                        "reverse_url_name",
+                        "reverse_url_args",
                     )
                 }
             ),
@@ -51,7 +65,7 @@ class CannedViewsAdmin(admin.ModelAdmin):
             pass
         else:
             role_names = [role.name for role in roles]
-            if "sql_view_name" in readonly_fields and CANNED_SUPER_ROLE in role_names:
+            if "sql_view_name" in readonly_fields and CANNED_VIEW_SUPER_ROLE in role_names:
                 readonly_fields.remove("sql_view_name")
                 readonly_fields.remove("sql_select_columns")
         return readonly_fields

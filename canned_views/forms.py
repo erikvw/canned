@@ -2,7 +2,7 @@ from django import forms
 from edc_form_validators import FormValidatorMixin
 from edc_sites.forms import SiteModelFormMixin
 
-from .models import CannedViews
+from .models import CannedView
 from .utils import get_sql_view_name_prefix
 
 
@@ -22,5 +22,5 @@ class CannedViewsForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
         return cleaned_data
 
     class Meta:
-        model = CannedViews
+        model = CannedView
         fields = "__all__"
