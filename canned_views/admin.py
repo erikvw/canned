@@ -55,19 +55,22 @@ class CannedViewAdmin(admin.ModelAdmin):
 
     search_fields = ("name", "display_name", "sql_view_name")
 
-    readonly_fields = ["sql_view_name", "sql_select_columns"]
+    readonly_fields = ("sql_view_name", "sql_select_columns")
 
-    def get_readonly_fields(self, request, obj=None):
-        readonly_fields = super().get_readonly_fields(request, obj=obj) or []
+    def get_readonly_fields(self, request, obj=None) -> tuple:
+        readonly_fields = super().get_readonly_fields(request, obj=obj) or ()
         try:
             roles = request.user.userprofile.roles.all()
         except AttributeError:
             pass
         else:
-            role_names = [role.name for role in roles]
+            role_names = tuple(role.name for role in roles)
             if "sql_view_name" in readonly_fields and CANNED_VIEW_SUPER_ROLE in role_names:
-                readonly_fields.remove("sql_view_name")
-                readonly_fields.remove("sql_select_columns")
+                readonly_fields = tuple(
+                    f
+                    for f in readonly_fields
+                    if f not in ("sql_view_name", "sql_select_columns")
+                )
         return readonly_fields
 
     @staticmethod
