@@ -4,34 +4,33 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('canned_views', '0002_cannedviews_columns_cannedviews_order_by_and_more'),
+        ("canned_views", "0002_cannedviews_columns_cannedviews_order_by_and_more"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='cannedviews',
-            name='columns',
+            model_name="cannedviews",
+            name="columns",
         ),
         migrations.RemoveField(
-            model_name='cannedviews',
-            name='order_by',
+            model_name="cannedviews",
+            name="order_by",
         ),
         migrations.RemoveField(
-            model_name='cannedviews',
-            name='where',
+            model_name="cannedviews",
+            name="where",
         ),
         migrations.RemoveField(
-            model_name='historicalcannedviews',
-            name='columns',
+            model_name="historicalcannedviews",
+            name="columns",
         ),
         migrations.RemoveField(
-            model_name='historicalcannedviews',
-            name='order_by',
+            model_name="historicalcannedviews",
+            name="order_by",
         ),
         migrations.RemoveField(
-            model_name='historicalcannedviews',
-            name='where',
+            model_name="historicalcannedviews",
+            name="where",
         ),
     ]

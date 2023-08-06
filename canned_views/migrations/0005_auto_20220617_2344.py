@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('canned_views', '0004_auto_20220617_2306'),
+        ("canned_views", "0004_auto_20220617_2306"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='cannedviews',
-            name='instructions',
+            model_name="cannedviews",
+            name="instructions",
             field=models.TextField(null=True),
         ),
         migrations.AddField(
-            model_name='historicalcannedviews',
-            name='instructions',
+            model_name="historicalcannedviews",
+            name="instructions",
             field=models.TextField(null=True),
         ),
     ]

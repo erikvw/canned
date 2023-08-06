@@ -5,60 +5,73 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('canned_views', '0005_auto_20220617_2344'),
+        ("canned_views", "0005_auto_20220617_2344"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='cannedviews',
-            name='filter_by_current_site',
-            field=models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], default='No', max_length=10),
+            model_name="cannedviews",
+            name="filter_by_current_site",
+            field=models.CharField(
+                choices=[("Yes", "Yes"), ("No", "No")], default="No", max_length=10
+            ),
         ),
         migrations.AddField(
-            model_name='historicalcannedviews',
-            name='filter_by_current_site',
-            field=models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], default='No', max_length=10),
+            model_name="historicalcannedviews",
+            name="filter_by_current_site",
+            field=models.CharField(
+                choices=[("Yes", "Yes"), ("No", "No")], default="No", max_length=10
+            ),
         ),
         migrations.AlterField(
-            model_name='cannedviews',
-            name='description',
+            model_name="cannedviews",
+            name="description",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='cannedviews',
-            name='display_name',
+            model_name="cannedviews",
+            name="display_name",
             field=models.CharField(blank=True, max_length=30),
         ),
         migrations.AlterField(
-            model_name='cannedviews',
-            name='instructions',
+            model_name="cannedviews",
+            name="instructions",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='cannedviews',
-            name='sql_select_columns',
-            field=models.TextField(blank=True, help_text='Comma separated list of field names for the SQL SELECT. All lowercase', null=True, validators=[django.core.validators.RegexValidator(regex='^([a-z0-9_, ])+$')]),
+            model_name="cannedviews",
+            name="sql_select_columns",
+            field=models.TextField(
+                blank=True,
+                help_text="Comma separated list of field names for the SQL SELECT. All lowercase",
+                null=True,
+                validators=[django.core.validators.RegexValidator(regex="^([a-z0-9_, ])+$")],
+            ),
         ),
         migrations.AlterField(
-            model_name='historicalcannedviews',
-            name='description',
+            model_name="historicalcannedviews",
+            name="description",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='historicalcannedviews',
-            name='display_name',
+            model_name="historicalcannedviews",
+            name="display_name",
             field=models.CharField(blank=True, max_length=30),
         ),
         migrations.AlterField(
-            model_name='historicalcannedviews',
-            name='instructions',
+            model_name="historicalcannedviews",
+            name="instructions",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='historicalcannedviews',
-            name='sql_select_columns',
-            field=models.TextField(blank=True, help_text='Comma separated list of field names for the SQL SELECT. All lowercase', null=True, validators=[django.core.validators.RegexValidator(regex='^([a-z0-9_, ])+$')]),
+            model_name="historicalcannedviews",
+            name="sql_select_columns",
+            field=models.TextField(
+                blank=True,
+                help_text="Comma separated list of field names for the SQL SELECT. All lowercase",
+                null=True,
+                validators=[django.core.validators.RegexValidator(regex="^([a-z0-9_, ])+$")],
+            ),
         ),
     ]

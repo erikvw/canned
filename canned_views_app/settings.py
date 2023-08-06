@@ -37,10 +37,8 @@ PROJECT_NAME = "Reports"
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-68zb@3bs^yev0--y_254d=@6&0cme3o7(9+6%#ga00)0(6)0x%"
+SECRET_KEY = "django-insecure-68zb@3bs^yev0--y_254d=@6&0cme3o7(9+6%#ga00)0(6)0x%"  # nosec B105
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -107,33 +105,10 @@ TEMPLATES = [
 WSGI_APPLICATION = "canned_views_app.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-
 DATABASES = {"default": env.db()}
+
 # be secure and clear DATABASE_URL since it is no longer needed.
 DATABASE_URL = None
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.mysql",
-#         "NAME": "canned_views",
-#         "USER": "",
-#         "PASSWORD": "",
-#         "HOST": "localhost",
-#         "PORT": "",
-#     }
-# }
-
-# Password validation
-# https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {

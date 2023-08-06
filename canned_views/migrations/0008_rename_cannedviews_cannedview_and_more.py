@@ -5,20 +5,19 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('sites', '0002_alter_domain_unique'),
+        ("sites", "0002_alter_domain_unique"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('canned_views', '0007_cannedviews_linked_column_name_and_more'),
+        ("canned_views", "0007_cannedviews_linked_column_name_and_more"),
     ]
 
     operations = [
         migrations.RenameModel(
-            old_name='CannedViews',
-            new_name='CannedView',
+            old_name="CannedViews",
+            new_name="CannedView",
         ),
         migrations.RenameModel(
-            old_name='HistoricalCannedViews',
-            new_name='HistoricalCannedView',
+            old_name="HistoricalCannedViews",
+            new_name="HistoricalCannedView",
         ),
     ]
