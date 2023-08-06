@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from django.contrib import admin
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -10,7 +12,6 @@ from .models import CannedView
 
 @admin.register(CannedView, site=canned_views_admin)
 class CannedViewAdmin(admin.ModelAdmin):
-
     form = CannedViewsForm
 
     fieldsets = (
@@ -46,18 +47,18 @@ class CannedViewAdmin(admin.ModelAdmin):
         ),
     )
 
-    list_display = [
+    list_display: Tuple[str, ...] = (
         "display_name",
         "list_view",
         "description",
         "sql_view_name",
-    ]
+    )
 
-    search_fields = ("name", "display_name", "sql_view_name")
+    search_fields: Tuple[str, ...] = ("name", "display_name", "sql_view_name")
 
-    readonly_fields = ("sql_view_name", "sql_select_columns")
+    readonly_fields: Tuple[str, ...] = ("sql_view_name", "sql_select_columns")
 
-    def get_readonly_fields(self, request, obj=None) -> tuple:
+    def get_readonly_fields(self, request, obj=None) -> Tuple[str, ...]:
         readonly_fields = super().get_readonly_fields(request, obj=obj) or ()
         try:
             roles = request.user.userprofile.roles.all()

@@ -1,3 +1,4 @@
+import re
 from typing import Any, List, Optional
 
 import sqlvalidator
@@ -74,7 +75,9 @@ class DynamicModel:
             raise DynamicModelError(
                 f"Invalid sql_view_name. Must start with `{get_sql_view_name_prefix()}`"
             )
-        self.sql_view_name = sql_view_name
+        if not re.match(r"^([a-z_])+$", sql_view_name):
+            raise DynamicModelError("Invalid sql view name")
+        self.sql_view_name: str = sql_view_name
         self.read_from_cursor()
         model_name = f"TemporaryView{name.replace('_', '').lower().title()}"
         # create class
@@ -87,23 +90,22 @@ class DynamicModel:
         except KeyError:
             pass
 
-    def get_sql(self, cols: Optional[str] = None):
-        cols = cols.replace(" ", "").split(",") if cols else []
+    def get_sql(self, cols: str = None):
+        cols = cols.replace(" ", "")
+        if not re.match(r"^([a-z,])+$", cols):
+            raise DynamicModelError("Invalid columns string.")
+        cols = cols.split(",") if cols else []
         for col in cols:
             if col not in self.sql_select_columns:
                 raise DynamicModelError(f"Invalid column specified. Got `{col}`.")
         sql_select_columns = cols or self.sql_select_columns
-        # if self.reverse_url == YES:
-        #     args = tuple() if self.reverse_url_args is None else
-        #     url_name = url_names.get(self.reverse_url_name)
-        #     sql_select_columns.append(f"'{url_name}' as url")
-        # if "subject_identifier" in sql_select_columns and "url" not in sql_select_columns:
-        #     url_name = url_names.get("subject_dashboard_url")
-        #     sql_select_columns.append(f"'{url_name}' as url")
         if "id" not in sql_select_columns:
-            sql = f"select {','.join(sql_select_columns)}, 0 AS id from {self.sql_view_name}"
+            sql = "select {','.join(sql_select_columns)}, 0 AS id from {self.sql_view_name}"
         else:
-            sql = f"select {','.join(sql_select_columns)} from {self.sql_view_name}"
+            sql = (
+                f"select {','.join(sql_select_columns)} "  # nosec B608
+                f"from {self.sql_view_name}"
+            )
         return sql
 
     def read_from_cursor(self):
@@ -112,8 +114,13 @@ class DynamicModel:
             try:
                 cursor.execute(f"describe {self.sql_view_name}")
             except OperationalError:
-                cursor.execute(f"select * from pragma_table_info('{self.sql_view_name}')")
-                self.sql_describe = f"select * from pragma_table_info('{self.sql_view_name}')"
+                cursor.execute(
+                    "select * from pragma_table_info('%(sql_view_name)s')",  # nosec B608
+                    params=dict(sql_view_name=self.sql_view_name),
+                )
+                self.sql_describe = (
+                    f"select * from pragma_table_info('{self.sql_view_name}')"  # nosec B608
+                )
                 self.dialect = Dialects.get("sqlite")
             else:
                 self.sql_describe = f"describe {self.sql_view_name}"

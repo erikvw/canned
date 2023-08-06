@@ -5,40 +5,59 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('canned_views', '0001_initial'),
+        ("canned_views", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='cannedviews',
-            name='columns',
-            field=models.TextField(help_text='comma separated list of column names', null=True, validators=[django.core.validators.RegexValidator(regex='^([0-9a-z_,])+$')]),
+            model_name="cannedviews",
+            name="columns",
+            field=models.TextField(
+                help_text="comma separated list of column names",
+                null=True,
+                validators=[django.core.validators.RegexValidator(regex="^([0-9a-z_,])+$")],
+            ),
         ),
         migrations.AddField(
-            model_name='cannedviews',
-            name='order_by',
-            field=models.TextField(null=True, validators=[django.core.validators.RegexValidator(regex='^([0-9a-z ])+$')]),
+            model_name="cannedviews",
+            name="order_by",
+            field=models.TextField(
+                null=True,
+                validators=[django.core.validators.RegexValidator(regex="^([0-9a-z ])+$")],
+            ),
         ),
         migrations.AddField(
-            model_name='cannedviews',
-            name='where',
-            field=models.TextField(null=True, validators=[django.core.validators.RegexValidator(regex='^([0-9a-z ])+$')]),
+            model_name="cannedviews",
+            name="where",
+            field=models.TextField(
+                null=True,
+                validators=[django.core.validators.RegexValidator(regex="^([0-9a-z ])+$")],
+            ),
         ),
         migrations.AddField(
-            model_name='historicalcannedviews',
-            name='columns',
-            field=models.TextField(help_text='comma separated list of column names', null=True, validators=[django.core.validators.RegexValidator(regex='^([0-9a-z_,])+$')]),
+            model_name="historicalcannedviews",
+            name="columns",
+            field=models.TextField(
+                help_text="comma separated list of column names",
+                null=True,
+                validators=[django.core.validators.RegexValidator(regex="^([0-9a-z_,])+$")],
+            ),
         ),
         migrations.AddField(
-            model_name='historicalcannedviews',
-            name='order_by',
-            field=models.TextField(null=True, validators=[django.core.validators.RegexValidator(regex='^([0-9a-z ])+$')]),
+            model_name="historicalcannedviews",
+            name="order_by",
+            field=models.TextField(
+                null=True,
+                validators=[django.core.validators.RegexValidator(regex="^([0-9a-z ])+$")],
+            ),
         ),
         migrations.AddField(
-            model_name='historicalcannedviews',
-            name='where',
-            field=models.TextField(null=True, validators=[django.core.validators.RegexValidator(regex='^([0-9a-z ])+$')]),
+            model_name="historicalcannedviews",
+            name="where",
+            field=models.TextField(
+                null=True,
+                validators=[django.core.validators.RegexValidator(regex="^([0-9a-z ])+$")],
+            ),
         ),
     ]
